@@ -1,1 +1,1 @@
-A console application math game based upon the tutorial from CSharpAcademy.
+A console application calculator based upon the tutorial from CSharpAcademy.
