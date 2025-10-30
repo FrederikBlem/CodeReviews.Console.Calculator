@@ -35,7 +35,7 @@ namespace Calculator.FrederikBlem
             Console.WriteLine("---------------------------------------------");
             historyMenuChoice = Console.ReadLine();
 
-            return historyMenuChoice;
+            return historyMenuChoice.Trim().ToLower();
         }
 
         internal string DisplayOperatorMenuAndGetChoice()
@@ -47,21 +47,30 @@ namespace Calculator.FrederikBlem
             Console.WriteLine("\ts - Subtract");
             Console.WriteLine("\tm - Multiply");
             Console.WriteLine("\td - Divide");
-            Console.WriteLine("\tr - Nth Root");
+            Console.WriteLine("------------------------");
+            Console.WriteLine("\tr - Nth Root (Enter 2 next for square root or 3 for cube root etc. Your next number will get rounded.)");
             Console.WriteLine("\tp - Power");
+            Console.WriteLine("------------------------");
+            Console.WriteLine("\tcos - cosinus");
+            Console.WriteLine("\tacos - arcus cosinus");
+            Console.WriteLine("\tsin - sinus");
+            Console.WriteLine("\tasin - arcus sinus");
+            Console.WriteLine("\ttan - tangens");
+            Console.WriteLine("\tatan - arcus tangens");
+
             Console.Write("Your option? ");
 
             operatorMenuChoice = Console.ReadLine();
 
-            return operatorMenuChoice;
+            return operatorMenuChoice.Trim().ToLower();
         }
 
-        internal double DisplayNumberInputMenuAndGetChoice(bool isFirstNumber = true)
+        internal double PromptGetValidNumber(bool isFirstNumber = true)
         {
             string? numInput;
             if (isFirstNumber)
             {
-                Console.Write("Type a number, and then press Enter: ");
+                Console.Write("Type a number (or a number representing degrees), and then press Enter: ");
             }
             else
             {
@@ -80,7 +89,7 @@ namespace Calculator.FrederikBlem
             return cleanNum;
         }
 
-        internal int PromptGetEntryNumber()
+        internal int PromptGetValidEntryNumber()
         {
             Console.Write("Enter the entry number to use its result: ");
             string? entryInput = Console.ReadLine();

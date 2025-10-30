@@ -5,7 +5,6 @@ namespace CalculatorLibrary;
 public class Calculator
 {
     static List<OperationRecord> operationRecords = new List<OperationRecord>();
-    StreamWriter logFile;
     public Calculator()
     {
         string filePath = $"{Directory.GetCurrentDirectory()}\\calculatorlog.json";
@@ -64,7 +63,46 @@ public class Calculator
         return result;
     }
 
-    static double NthRoot(double A, int N)
+    public double DoTrigonometricOperation(double angleInDegrees, string op)
+    {
+        double angleInRadians = angleInDegrees * (Math.PI / 180.0);
+        double result = double.NaN;
+        OperationType opType = OperationType.Add;
+        switch (op)
+        {
+            case "sin":
+                result = Math.Sin(angleInRadians);
+                opType = OperationType.Sinus;
+                break;
+            case "cos":
+                result = Math.Cos(angleInRadians);
+                opType = OperationType.Cosinus;
+                break;
+            case "tan":
+                result = Math.Tan(angleInRadians);
+                opType = OperationType.Tangens;
+                break;
+            case "asin":
+                result = Math.Asin(angleInRadians);
+                opType = OperationType.ArcusSinus;
+                break;
+            case "acos":
+                result = Math.Acos(angleInRadians);
+                opType = OperationType.ArcusCosinus;
+                break;
+            case "atan":
+                result = Math.Atan(angleInRadians);
+                opType = OperationType.ArcusTangens;
+                break;
+            default:
+                break;
+        }
+        AddOperationRecord(angleInDegrees, angleInRadians, opType, result);
+
+        return result;
+    }
+
+    static double NthRoot(double A, double N)
     {
         return Math.Pow(A, 1.0 / N);
     }
@@ -110,11 +148,36 @@ public class Calculator
                 case OperationType.Power:
                     operationSymbol = "^";
                     break;
+                case OperationType.Cosinus:
+                    operationSymbol = "cosinus";
+                    break;
+                case OperationType.ArcusCosinus:
+                    operationSymbol = "arcus cosinus";
+                    break;
+                case OperationType.Sinus:
+                    operationSymbol = "sinus";
+                    break;
+                case OperationType.ArcusSinus:
+                    operationSymbol = "arcus sinus";
+                    break;
+                case OperationType.Tangens:
+                    operationSymbol = "tangens";
+                    break;
+                case OperationType.ArcusTangens:
+                    operationSymbol = "arcus tangens";
+                    break;
                 default:
                     break;
             }
 
-            Console.WriteLine($"Operation {i}: {record.Operand1} {operationSymbol} {record.Operand2} = {record.Result}");
+            if(record.Operation > OperationType.Power)
+            {
+                Console.WriteLine($"Operation {i}: {operationSymbol}, Angle in degrees {record.Operand1}, Angle in radians {record.Operand2} = {record.Result}");
+            }
+            else
+            {
+                Console.WriteLine($"Operation {i}: {record.Operand1} {operationSymbol} {record.Operand2} = {record.Result}");
+            }                
         }
     }
 

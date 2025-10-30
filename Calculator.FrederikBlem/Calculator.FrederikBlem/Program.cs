@@ -12,7 +12,6 @@ internal class Program
         int timesCalculated = 0;
         bool endApp = false;
         Menu menu = new();
-        // Display title as the C# console calculator app.
         Console.WriteLine("Console Calculator in C#\r");
         Console.WriteLine("------------------------\n");
 
@@ -28,38 +27,47 @@ internal class Program
                 switch (mainMenuChoice)
                 {
                     case "1": 
-                        Console.Clear();
                         exitMainMenu = false;
                         bool inCalculationMenu = true;
                         while (inCalculationMenu)
                         {
                             Console.Clear();
                             
-                            double cleanNum1 = menu.DisplayNumberInputMenuAndGetChoice();
+                            double cleanNum1 = menu.PromptGetValidNumber();
                             string operatorInput = menu.DisplayOperatorMenuAndGetChoice();
 
-                            double result;
-
-                            // Validate input is not null, and matches the pattern
+                            //TODO: refactor so I don't repeat too much code (Similar 1) and fix Regex statement order
                             if (operatorInput == null || !Regex.IsMatch(operatorInput, "[a|s|m|d|r|p]"))
                             {
                                 Console.WriteLine("Error: Unrecognized input.");
+                            }
+                            else if (Regex.IsMatch(operatorInput, "[acos|cos|asin|sin|atan|tan]"))
+                            {
+                                double result = calculator.DoTrigonometricOperation(cleanNum1, operatorInput);
+                                if (double.IsNaN(result))
+                                {
+                                    Console.WriteLine("This operation will result in a mathematical error.\n");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Your result: {0:0.##}\n", result);
+                                    timesCalculated++;
+                                }
                             }
                             else
                             {
                                 try
                                 {
+                                    double cleanNum2 = menu.PromptGetValidNumber(isFirstNumber: false);
 
-                                    double cleanNum2 = menu.DisplayNumberInputMenuAndGetChoice(isFirstNumber: false);
-
-                                    result = calculator.DoOperation(cleanNum1, cleanNum2, operatorInput);
+                                    double result = calculator.DoOperation(cleanNum1, cleanNum2, operatorInput);
                                     if (double.IsNaN(result))
                                     {
                                         Console.WriteLine("This operation will result in a mathematical error.\n");
                                     }
-                                    else 
-                                    { 
-                                        Console.WriteLine("Your result: {0:0.##}\n", result); 
+                                    else
+                                    {
+                                        Console.WriteLine("Your result: {0:0.##}\n", result);
                                         timesCalculated++;
                                     }
                                 }
@@ -77,12 +85,11 @@ internal class Program
                                 inCalculationMenu = false;
                         }
                         break;
-                    case "2":
-                        Console.Clear();
+                    case "2":                        
                         exitMainMenu = false;
                         bool inHistoryMenu = true;
                         while (inHistoryMenu)
-                        {                            
+                        {
                             var historyMenuChoice = menu.DisplayHistoryMenuAndGetChoice();
 
                             switch (historyMenuChoice)
@@ -102,32 +109,53 @@ internal class Program
                                     Console.WriteLine("Use a Result from Operation History:");
                                     calculator.DisplayOperationRecords();
 
-                                    int entryNumber = menu.PromptGetEntryNumber();
+                                    int entryNumber = menu.PromptGetValidEntryNumber();
                                     
                                     double entryResult = CalculatorLibrary.Calculator.GetOperationRecordResult(entryNumber);
                                     Console.Clear();
                                     Console.WriteLine($"The result from entry {entryNumber} is: {entryResult}\n");
 
                                     string operatorInput = menu.DisplayOperatorMenuAndGetChoice();
-                                    double cleanNum2 = menu.DisplayNumberInputMenuAndGetChoice(isFirstNumber: false);
 
-                                    double result;
-                                    try
+                                    //TODO: refactor so I don't repeat too much code (Similar 2) and fix Regex statement order
+                                    if (operatorInput == null || !Regex.IsMatch(operatorInput, "[a|s|m|d|r|p]"))
                                     {
-                                        result = calculator.DoOperation(entryResult, cleanNum2, operatorInput);
+                                        Console.WriteLine("Error: Unrecognized input.");
+                                    }
+                                    else if (Regex.IsMatch(operatorInput, "[acos|cos|asin|sin|atan|tan]"))
+                                    {
+                                        double result = calculator.DoTrigonometricOperation(entryResult, operatorInput);
                                         if (double.IsNaN(result))
                                         {
                                             Console.WriteLine("This operation will result in a mathematical error.\n");
                                         }
-                                        else 
-                                        { 
+                                        else
+                                        {
                                             Console.WriteLine("Your result: {0:0.##}\n", result);
                                             timesCalculated++;
                                         }
                                     }
-                                    catch (Exception e)
+                                    else
                                     {
-                                        Console.WriteLine("Oh no! An exception occurred trying to do the math.\n - Details: " + e.Message);
+                                        try
+                                        {
+                                            double cleanNum2 = menu.PromptGetValidNumber(isFirstNumber: false);
+
+                                            double result = calculator.DoOperation(entryNumber, cleanNum2, operatorInput);
+                                            if (double.IsNaN(result))
+                                            {
+                                                Console.WriteLine("This operation will result in a mathematical error.\n");
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("Your result: {0:0.##}\n", result);
+                                                timesCalculated++;
+                                            }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Console.WriteLine("Oh no! An exception occurred trying to do the math.\n - Details: " + e.Message);
+                                        }
                                     }
                                     Console.WriteLine("------------------------\n");
                                     break;
@@ -152,13 +180,13 @@ internal class Program
                             Console.WriteLine("Invalid input. Please enter 'y' or 'n': ");
                             saveInput = Console.ReadLine();
                         }
-                        if (saveInput == "y")
+                        if (saveInput.Trim().ToLower() == "y")
                         {
                             Console.WriteLine("Saving history to file...");
                             calculator.SaveHistoryToJSONFile();
                             Console.WriteLine("History saved.");
                         }
-                        if (saveInput == "n")
+                        if (saveInput.Trim().ToLower() == "n")
                         {
                             Console.WriteLine("History not saved.");
                         }

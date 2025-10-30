@@ -16,6 +16,12 @@ namespace Models
         Multiply = 2,
         Divide = 3,
         Root = 4,
-        Power = 5        
+        Power = 5,
+        Cosinus = 6,
+        ArcusCosinus = 7,
+        Sinus = 8,
+        ArcusSinus = 9,
+        Tangens = 10,
+        ArcusTangens = 11
     }
 }
