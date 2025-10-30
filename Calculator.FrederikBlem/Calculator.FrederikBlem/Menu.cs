@@ -47,11 +47,50 @@ namespace Calculator.FrederikBlem
             Console.WriteLine("\ts - Subtract");
             Console.WriteLine("\tm - Multiply");
             Console.WriteLine("\td - Divide");
+            Console.WriteLine("\tr - Nth Root");
+            Console.WriteLine("\tp - Power");
             Console.Write("Your option? ");
 
             operatorMenuChoice = Console.ReadLine();
 
             return operatorMenuChoice;
+        }
+
+        internal double DisplayNumberInputMenuAndGetChoice(bool isFirstNumber = true)
+        {
+            string? numInput;
+            if (isFirstNumber)
+            {
+                Console.Write("Type a number, and then press Enter: ");
+            }
+            else
+            {
+                Console.Write("Type another number, and then press Enter: ");
+            }
+            
+            numInput = Console.ReadLine();
+
+            double cleanNum;
+            while (!double.TryParse(numInput, out cleanNum))
+            {
+                Console.Write("This is not valid input. Please enter a numeric value: ");
+                numInput = Console.ReadLine();
+            }
+
+            return cleanNum;
+        }
+
+        internal int PromptGetEntryNumber()
+        {
+            Console.Write("Enter the entry number to use its result: ");
+            string? entryInput = Console.ReadLine();
+            int entryNumber = 0;
+            while (!int.TryParse(entryInput, out entryNumber) || entryNumber < 1)
+            {
+                Console.Write("This is not valid input. Please enter a valid entry number: ");
+                entryInput = Console.ReadLine();
+            }
+            return entryNumber;
         }
     }
 }

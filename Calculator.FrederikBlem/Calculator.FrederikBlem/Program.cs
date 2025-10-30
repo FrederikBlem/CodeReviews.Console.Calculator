@@ -9,6 +9,7 @@ internal class Program
     {
         CultureInfo.CurrentCulture = new CultureInfo("en-US"); // I want to use dot as decimal separator
 
+        int timesCalculated = 0;
         bool endApp = false;
         Menu menu = new();
         // Display title as the C# console calculator app.
@@ -26,43 +27,21 @@ internal class Program
 
                 switch (mainMenuChoice)
                 {
-                    case "1":
+                    case "1": 
+                        Console.Clear();
                         exitMainMenu = false;
                         bool inCalculationMenu = true;
                         while (inCalculationMenu)
                         {
-                            // Declare variables and set to empty.
-                            // Use Nullable types (with ?) to match type of System.Console.ReadLine
-                            string? numInput1 = "";
-                            string? numInput2 = "";
-                            double result = 0;
-
-                            // Ask the user to type the first number.
-                            Console.Write("Type a number, and then press Enter: ");
-                            numInput1 = Console.ReadLine();
-
-                            double cleanNum1 = 0;
-                            while (!double.TryParse(numInput1, out cleanNum1))
-                            {
-                                Console.Write("This is not valid input. Please enter a numeric value: ");
-                                numInput1 = Console.ReadLine();
-                            }
-
+                            Console.Clear();
+                            
+                            double cleanNum1 = menu.DisplayNumberInputMenuAndGetChoice();
                             string operatorInput = menu.DisplayOperatorMenuAndGetChoice();
 
-                            // Ask the user to type the second number.
-                            Console.Write("Type another number, and then press Enter: ");
-                            numInput2 = Console.ReadLine();
-
-                            double cleanNum2 = 0;
-                            while (!double.TryParse(numInput2, out cleanNum2))
-                            {
-                                Console.Write("This is not valid input. Please enter a numeric value: ");
-                                numInput2 = Console.ReadLine();
-                            }
+                            double result;
 
                             // Validate input is not null, and matches the pattern
-                            if (operatorInput == null || !Regex.IsMatch(operatorInput, "[a|s|m|d]"))
+                            if (operatorInput == null || !Regex.IsMatch(operatorInput, "[a|s|m|d|r|p]"))
                             {
                                 Console.WriteLine("Error: Unrecognized input.");
                             }
@@ -70,12 +49,19 @@ internal class Program
                             {
                                 try
                                 {
+
+                                    double cleanNum2 = menu.DisplayNumberInputMenuAndGetChoice(isFirstNumber: false);
+
                                     result = calculator.DoOperation(cleanNum1, cleanNum2, operatorInput);
                                     if (double.IsNaN(result))
                                     {
                                         Console.WriteLine("This operation will result in a mathematical error.\n");
                                     }
-                                    else Console.WriteLine("Your result: {0:0.##}\n", result);
+                                    else 
+                                    { 
+                                        Console.WriteLine("Your result: {0:0.##}\n", result); 
+                                        timesCalculated++;
+                                    }
                                 }
                                 catch (Exception e)
                                 {
@@ -83,10 +69,16 @@ internal class Program
                                 }
                             }
                             Console.WriteLine("------------------------\n");
-                            inCalculationMenu = false;
+
+                            string? continueInput = "";
+                            Console.Write("Press 'c' to continue calculating, or any other key to return to the main menu: ");
+                            continueInput = Console.ReadLine();
+                            if (continueInput != "c")
+                                inCalculationMenu = false;
                         }
                         break;
                     case "2":
+                        Console.Clear();
                         exitMainMenu = false;
                         bool inHistoryMenu = true;
                         while (inHistoryMenu)
@@ -109,28 +101,15 @@ internal class Program
                                     Console.Clear();
                                     Console.WriteLine("Use a Result from Operation History:");
                                     calculator.DisplayOperationRecords();
-                                    Console.Write("Enter the entry number to use its result: ");
-                                    string? entryInput = Console.ReadLine();
-                                    int entryNumber = 0;
-                                    while (!int.TryParse(entryInput, out entryNumber) || entryNumber < 1)
-                                    {
-                                        Console.Write("This is not valid input. Please enter a valid entry number: ");
-                                        entryInput = Console.ReadLine();
-                                    }
+
+                                    int entryNumber = menu.PromptGetEntryNumber();
+                                    
                                     double entryResult = CalculatorLibrary.Calculator.GetOperationRecordResult(entryNumber);
                                     Console.Clear();
                                     Console.WriteLine($"The result from entry {entryNumber} is: {entryResult}\n");
 
                                     string operatorInput = menu.DisplayOperatorMenuAndGetChoice();
-                                    Console.Write("Type another number, and then press Enter: ");
-
-                                    string? numInput2 = Console.ReadLine();
-                                    double cleanNum2;
-                                    while (!double.TryParse(numInput2, out cleanNum2))
-                                    {
-                                        Console.Write("This is not valid input. Please enter a numeric value: ");
-                                        numInput2 = Console.ReadLine();
-                                    }
+                                    double cleanNum2 = menu.DisplayNumberInputMenuAndGetChoice(isFirstNumber: false);
 
                                     double result;
                                     try
@@ -140,7 +119,11 @@ internal class Program
                                         {
                                             Console.WriteLine("This operation will result in a mathematical error.\n");
                                         }
-                                        else Console.WriteLine("Your result: {0:0.##}\n", result);
+                                        else 
+                                        { 
+                                            Console.WriteLine("Your result: {0:0.##}\n", result);
+                                            timesCalculated++;
+                                        }
                                     }
                                     catch (Exception e)
                                     {
@@ -158,6 +141,30 @@ internal class Program
                         }
                         break;
                     case "3":
+                        Console.Clear();
+                        Console.WriteLine($"The application has been used to calculate {timesCalculated} times this session.");
+                        Console.WriteLine("------------------------");
+                        Console.WriteLine("Save history to file before exit? y/n");
+
+                        string? saveInput = Console.ReadLine();
+                        while (saveInput != "y" && saveInput != "n")
+                        {
+                            Console.WriteLine("Invalid input. Please enter 'y' or 'n': ");
+                            saveInput = Console.ReadLine();
+                        }
+                        if (saveInput == "y")
+                        {
+                            Console.WriteLine("Saving history to file...");
+                            calculator.SaveHistoryToJSONFile();
+                            Console.WriteLine("History saved.");
+                        }
+                        if (saveInput == "n")
+                        {
+                            Console.WriteLine("History not saved.");
+                        }
+                        Console.WriteLine("------------------------\n");
+                        Console.WriteLine("Press Enter to exit the application.");
+                        Console.ReadLine();
                         exitMainMenu = true;
                         endApp = true;
                         break;
@@ -165,31 +172,6 @@ internal class Program
                         break; 
                 }                            
             } while (!exitMainMenu);
-
-            
-
-            //// Wait for the user to respond before closing.
-            //Console.WriteLine("Choose an option from the following list:");
-            //Console.WriteLine("\tn - Exit");
-            //Console.WriteLine("\td - Display Operation History");
-            //Console.WriteLine("\tc - Clear Operation History");
-            //Console.Write("Your option? ");
-            //string? response = Console.ReadLine();
-            //if (response == "n") 
-            //{ 
-            //    endApp = true;
-            //    calculator.SaveHistoryToJSONFile();
-            //}
-            //if (response == "d")
-            //{
-            //    calculator.DisplayOperationRecords();
-            //}
-            //if (response == "c")
-            //{
-            //    calculator.ClearOperationRecords();
-            //}
-
-            Console.WriteLine("\n"); // Friendly linespacing.
         }
     }
 }

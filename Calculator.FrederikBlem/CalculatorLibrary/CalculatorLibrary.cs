@@ -47,6 +47,15 @@ public class Calculator
                 }
                 opType = OperationType.Divide;
                 break;
+            case "r":
+                result = NthRoot(num1, (int)num2);
+                opType = OperationType.Root; // Using Multiply as a placeholder since Sqrt is not defined in OperationType
+                break;
+            case "p":
+                result = Math.Pow(num1, num2);
+                opType = OperationType.Power; // Using Multiply as a placeholder since Pow is not defined in OperationType
+                break;
+
             default:
                 break;
         }
@@ -54,6 +63,12 @@ public class Calculator
 
         return result;
     }
+
+    static double NthRoot(double A, int N)
+    {
+        return Math.Pow(A, 1.0 / N);
+    }
+
     #region Operation Record (List) Handling
     private static void AddOperationRecord(double operand1, double operand2, OperationType opType, double result)
     {
@@ -89,6 +104,12 @@ public class Calculator
                 case OperationType.Divide:
                     operationSymbol = "/";
                     break;
+                case OperationType.Root:
+                    operationSymbol = "√";
+                    break;
+                case OperationType.Power:
+                    operationSymbol = "^";
+                    break;
                 default:
                     break;
             }
@@ -113,7 +134,7 @@ public class Calculator
     #endregion // Operation Record (List) Handling
 
     #region File and Json Handling
-    public void SaveHistoryToJSONFile()
+    public void SaveHistoryToJSONFile() // Load has already been implemented in the constructor, so we don't need to append to the file here.
     {
         List<OperationRecord> _data = new List<OperationRecord>();
 
