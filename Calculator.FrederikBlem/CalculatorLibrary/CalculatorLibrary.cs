@@ -1,6 +1,5 @@
-﻿// CalculatorLibrary.cs
+﻿using Models;
 using System.Text.Json;
-using Models;
 namespace CalculatorLibrary;
 public class Calculator
 {
@@ -102,24 +101,6 @@ public class Calculator
         return result;
     }
 
-    static double NthRoot(double A, double N)
-    {
-        return Math.Pow(A, 1.0 / N);
-    }
-
-    #region Operation Record (List) Handling
-    private static void AddOperationRecord(double operand1, double operand2, OperationType opType, double result)
-    {
-        OperationRecord record = new OperationRecord
-        {
-            Operand1 = operand1,
-            Operand2 = operand2,
-            Operation = opType,
-            Result = result
-        };
-        operationRecords.Add(record);
-    }
-
     public void DisplayOperationRecords()
     {
         int i = 0;
@@ -127,7 +108,7 @@ public class Calculator
         foreach (var record in operationRecords)
         {
             i++;
-            
+
             switch (record.Operation)
             {
                 case OperationType.Add:
@@ -170,16 +151,34 @@ public class Calculator
                     break;
             }
 
-            if(record.Operation > OperationType.Power)
+            if (record.Operation > OperationType.Power)
             {
                 Console.WriteLine($"Operation {i}: {operationSymbol}, Angle in degrees {record.Operand1}, Angle in radians {record.Operand2} = {record.Result}");
             }
             else
             {
                 Console.WriteLine($"Operation {i}: {record.Operand1} {operationSymbol} {record.Operand2} = {record.Result}");
-            }                
+            }
         }
     }
+
+    static double NthRoot(double A, double N)
+    {
+        return Math.Pow(A, 1.0 / N);
+    }
+
+    #region Operation Record (List) Handling
+    private static void AddOperationRecord(double operand1, double operand2, OperationType opType, double result)
+    {
+        OperationRecord record = new OperationRecord
+        {
+            Operand1 = operand1,
+            Operand2 = operand2,
+            Operation = opType,
+            Result = result
+        };
+        operationRecords.Add(record);
+    }    
 
     public static int GetOperationRecordResult(int entryNumber)
     {
@@ -196,8 +195,8 @@ public class Calculator
     }
     #endregion // Operation Record (List) Handling
 
-    #region File and Json Handling
-    public void SaveHistoryToJSONFile() // Load has already been implemented in the constructor, so we don't need to append to the file here.
+    #region File and Json Handling    
+    public void SaveHistoryToJSONFile() 
     {
         List<OperationRecord> _data = new List<OperationRecord>();
 
@@ -228,6 +227,10 @@ public class Calculator
                 operationRecords = loadedRecords;
             }
         }
+        else
+        {
+            Console.WriteLine("There are no calculations in the history.");
+        }
     }
 
     public void ClearOperationRecords()
@@ -239,5 +242,6 @@ public class Calculator
             File.Delete(filePath);
         }
     }
+
     #endregion // File and Json Handling
 }
