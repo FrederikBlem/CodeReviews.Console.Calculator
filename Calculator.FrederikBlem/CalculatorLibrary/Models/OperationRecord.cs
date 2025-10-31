@@ -1,4 +1,4 @@
-﻿namespace Models;
+﻿namespace CalculatorLibrary.Models;
 internal class OperationRecord
 {
     public double Operand1 { get; set; }
@@ -15,10 +15,10 @@ internal enum OperationType
     Divide = 3,
     Root = 4,
     Power = 5,
-    Cosinus = 6,
-    ArcusCosinus = 7,
-    Sinus = 8,
-    ArcusSinus = 9,
-    Tangens = 10,
-    ArcusTangens = 11
+    Cosine = 6,
+    ArcCosine = 7,
+    Sine = 8,
+    ArcSine = 9,
+    Tangent = 10,
+    ArcTangent = 11
 }

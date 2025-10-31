@@ -10,10 +10,10 @@ internal class Program
         int timesCalculated = 0;
         bool endApp = false;
 
-        Menu menu = new();
+        string lineSpacing = "------------------------------------------------------------------------------------------";
 
         Console.WriteLine("Console Calculator in C#\r");
-        Console.WriteLine("------------------------\n");
+        Console.WriteLine(lineSpacing);
 
         CalculatorLibrary.Calculator calculator = new();
 
@@ -22,7 +22,7 @@ internal class Program
             bool exitMainMenu = false;
             do {
                 
-                var mainMenuChoice = menu.DisplayMainMenuAndGetChoice();
+                var mainMenuChoice = Menu.DisplayMainMenuAndGetChoice();
 
                 switch (mainMenuChoice)
                 {
@@ -33,14 +33,14 @@ internal class Program
                         {
                             Console.Clear();
                             
-                            double cleanNum1 = menu.PromptGetValidNumber();
-                            string operatorInput = menu.DisplayOperatorMenuAndGetChoice();
+                            double cleanNum1 = Helper.PromptGetValidNumber();
+                            string operatorInput = Menu.DisplayOperatorMenuAndGetChoice();
 
-                            timesCalculated += menu.ValidateInputAndPerformOperation(operatorInput, calculator, cleanNum1, menu);
+                            timesCalculated += Helper.ValidateInputAndPerformOperation(operatorInput, calculator, cleanNum1);
 
-                            Console.WriteLine("------------------------\n");
+                            Console.WriteLine(lineSpacing);
 
-                            string? continueInput = "";
+                            string? continueInput;
                             Console.Write("Press 'c' to continue calculating, or any other key to return to the main menu: ");
                             continueInput = Console.ReadLine();
                             if (continueInput != "c")
@@ -52,7 +52,7 @@ internal class Program
                         bool inHistoryMenu = true;
                         while (inHistoryMenu)
                         {
-                            var historyMenuChoice = menu.DisplayHistoryMenuAndGetChoice();
+                            var historyMenuChoice = Menu.DisplayHistoryMenuAndGetChoice();
 
                             switch (historyMenuChoice)
                             {
@@ -71,22 +71,26 @@ internal class Program
                                     Console.WriteLine("Use a Result from Operation History:");
                                     calculator.DisplayOperationRecords();
 
-                                    int entryNumber = menu.PromptGetValidEntryNumber();
+                                    int entryNumber = Helper.PromptGetValidEntryNumber();
                                     
-                                    double entryResult = CalculatorLibrary.Calculator.GetOperationRecordResult(entryNumber);
+                                    double entryResult = calculator.GetOperationRecordResult(entryNumber);
                                     Console.Clear();
                                     Console.WriteLine($"The result from entry {entryNumber} is: {entryResult}\n");
 
-                                    string operatorInput = menu.DisplayOperatorMenuAndGetChoice();
+                                    string operatorInput = Menu.DisplayOperatorMenuAndGetChoice();
 
-                                    timesCalculated += menu.ValidateInputAndPerformOperation(operatorInput, calculator, entryResult, menu);
+                                    timesCalculated += Helper.ValidateInputAndPerformOperation(operatorInput, calculator, entryResult);
 
-                                    Console.WriteLine("------------------------\n");
+                                    Console.WriteLine(lineSpacing);
                                     break;
                                 case "4":
+                                    Console.Clear();
+                                    Console.WriteLine("Saving history to file...");
                                     calculator.SaveHistoryToJSONFile();
+                                    Console.WriteLine("History saved.");
                                     break;
                                 case "5":
+                                    Console.Clear();
                                     inHistoryMenu = false;
                                     break;
                                 default:
@@ -98,7 +102,7 @@ internal class Program
                     case "3":
                         Console.Clear();
                         Console.WriteLine($"The application has been used to calculate {timesCalculated} times this session.");
-                        Console.WriteLine("------------------------");
+                        Console.WriteLine(lineSpacing);
                         Console.WriteLine("Save history to file before exit? y/n");
 
                         string? saveInput = Console.ReadLine();
@@ -117,7 +121,7 @@ internal class Program
                         {
                             Console.WriteLine("History not saved.");
                         }
-                        Console.WriteLine("------------------------\n");
+                        Console.WriteLine(lineSpacing);
                         Console.WriteLine("Press Enter to exit the application.");
                         Console.ReadLine();
                         exitMainMenu = true;

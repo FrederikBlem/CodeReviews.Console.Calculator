@@ -1,9 +1,9 @@
-﻿using Models;
+﻿using CalculatorLibrary.Models;
 using System.Text.Json;
 namespace CalculatorLibrary;
 public class Calculator
 {
-    static List<OperationRecord> operationRecords = new List<OperationRecord>();
+    static List<OperationRecord> operationRecords = new();
     public Calculator()
     {
         string filePath = $"{Directory.GetCurrentDirectory()}\\calculatorlog.json";
@@ -71,27 +71,27 @@ public class Calculator
         {
             case "sin":
                 result = Math.Sin(angleInRadians);
-                opType = OperationType.Sinus;
+                opType = OperationType.Sine;
                 break;
             case "cos":
                 result = Math.Cos(angleInRadians);
-                opType = OperationType.Cosinus;
+                opType = OperationType.Cosine;
                 break;
             case "tan":
                 result = Math.Tan(angleInRadians);
-                opType = OperationType.Tangens;
+                opType = OperationType.Tangent;
                 break;
             case "asin":
                 result = Math.Asin(angleInRadians);
-                opType = OperationType.ArcusSinus;
+                opType = OperationType.ArcSine;
                 break;
             case "acos":
                 result = Math.Acos(angleInRadians);
-                opType = OperationType.ArcusCosinus;
+                opType = OperationType.ArcCosine;
                 break;
             case "atan":
                 result = Math.Atan(angleInRadians);
-                opType = OperationType.ArcusTangens;
+                opType = OperationType.ArcTangent;
                 break;
             default:
                 break;
@@ -129,22 +129,22 @@ public class Calculator
                 case OperationType.Power:
                     operationSymbol = "^";
                     break;
-                case OperationType.Cosinus:
+                case OperationType.Cosine:
                     operationSymbol = "cosinus";
                     break;
-                case OperationType.ArcusCosinus:
+                case OperationType.ArcCosine:
                     operationSymbol = "arcus cosinus";
                     break;
-                case OperationType.Sinus:
+                case OperationType.Sine:
                     operationSymbol = "sinus";
                     break;
-                case OperationType.ArcusSinus:
+                case OperationType.ArcSine:
                     operationSymbol = "arcus sinus";
                     break;
-                case OperationType.Tangens:
+                case OperationType.Tangent:
                     operationSymbol = "tangens";
                     break;
-                case OperationType.ArcusTangens:
+                case OperationType.ArcTangent:
                     operationSymbol = "arcus tangens";
                     break;
                 default:
@@ -170,7 +170,7 @@ public class Calculator
     #region Operation Record (List) Handling
     private static void AddOperationRecord(double operand1, double operand2, OperationType opType, double result)
     {
-        OperationRecord record = new OperationRecord
+        OperationRecord record = new()
         {
             Operand1 = operand1,
             Operand2 = operand2,
@@ -180,7 +180,7 @@ public class Calculator
         operationRecords.Add(record);
     }    
 
-    public static int GetOperationRecordResult(int entryNumber)
+    public double GetOperationRecordResult(int entryNumber)
     {
         while(entryNumber < 1 || entryNumber > operationRecords.Count)
         {
@@ -191,14 +191,14 @@ public class Calculator
                 entryNumber = newEntryNumber;
             }
         }
-        return (int)operationRecords[entryNumber - 1].Result;
+        return operationRecords[entryNumber - 1].Result;
     }
     #endregion // Operation Record (List) Handling
 
     #region File and Json Handling    
     public void SaveHistoryToJSONFile() 
     {
-        List<OperationRecord> _data = new List<OperationRecord>();
+        List<OperationRecord> _data = new();
 
         foreach (var record in operationRecords)
         {
